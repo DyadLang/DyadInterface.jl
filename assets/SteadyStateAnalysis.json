@@ -1,0 +1,42 @@
+{
+    "title": "SteadyStateAnalysis",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Analysis Type",
+            "default": "SteadyStateAnalysis"
+        },
+        "model": {
+            "type": "object",
+            "description": "Model to simulate",
+            "dyad:type": "component"
+        },
+        "alg": {
+            "enum": [
+                "auto",
+                "TrustRegion",
+                "LevenbergMarquardt",
+                "NewtonRaphson"
+            ]
+        },
+        "abstol": {
+            "type": "number",
+            "description": "Absolute tolerance to use during the simulation"
+        },
+        "reltol": {
+            "type": "number",
+            "description": "Relative tolerance to use during the simulation"
+        },
+        "IfLifting": {
+            "type": "boolean",
+            "description": "IfLifting pass in structural simplification",
+            "default": false
+        }
+    },
+    "required": [
+        "name",
+        "abstol",
+        "reltol"
+    ]
+}

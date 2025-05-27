@@ -1,0 +1,9 @@
+{
+  "name": "LotkaVolterraTransient",
+  "alg": "Tsit5",
+  "abstol": 1e-6,
+  "reltol": 1e-3,
+  "start": 0,
+  "stop": 1,
+  "saveat": 0.1
+}

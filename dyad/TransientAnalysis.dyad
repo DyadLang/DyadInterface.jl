@@ -1,0 +1,13 @@
+partial analysis TransientAnalysis
+  extends Analysis
+  parameter alg::String = "auto"
+  parameter start::Time = 0
+  parameter stop::Time
+  parameter abstol::Real
+  parameter reltol::Real
+  parameter saveat::Real = 0
+  parameter dtmax::Time = 0
+  parameter IfLifting::Boolean = false
+
+  model::Empty = Empty()
+end

@@ -1,0 +1,73 @@
+{
+    "title": "Transient Analysis",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Analysis Type",
+            "default": "TransientAnalysis"
+        },
+        "model": {
+            "type": "object",
+            "description": "Model to simulate",
+            "dyad:type": "component"
+        },
+        "alg": {
+            "enum": [
+                "auto",
+                "Rodas4",
+                "FBDF",
+                "Tsit5"
+            ],
+            "default": "auto"
+        },
+        "abstol": {
+            "type": "number",
+            "description": "Absolute tolerance to use during the simulation"
+        },
+        "reltol": {
+            "type": "number",
+            "description": "Relative tolerance to use during the simulation"
+        },
+        "start": {
+            "type": "number",
+            "description": "Start time of simulation",
+            "default": 0
+        },
+        "stop": {
+            "type": "number",
+            "description": "Stop time of simulation"
+        },
+        "saveat": {
+            "anyOf": [
+                {
+                    "type": "number",
+                    "minimum": 0
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                }
+            ]
+        },
+        "dtmax": {
+            "description": "Maximum time step",
+            "type": "number",
+            "minimum": 0
+        },
+        "IfLifting": {
+            "type": "boolean",
+            "description": "IfLifting pass in structural simplification",
+            "default": false
+        }
+    },
+    "required": [
+        "name",
+        "model",
+        "stop",
+        "abstol",
+        "reltol"
+    ]
+}

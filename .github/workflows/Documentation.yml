@@ -1,0 +1,61 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+env:
+  JULIA_PKG_SERVER: internal.juliahub.com
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check_commit:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+            ref: ${{ github.event.pull_request.head.ref }}
+      - name: Check if the build should be skipped
+        id: check_commit
+        run: |
+          message=$(git log -1 --pretty=format:'%s')
+          re="\[(skip-docs-ci)\]"
+          if [[ $message =~ $re ]]; then
+            echo "match=true" >> $GITHUB_OUTPUT
+            echo "$message -> Match is true"
+          else
+            echo "$message -> Match is false"
+          fi
+    outputs:
+      match: ${{ steps.check_commit.outputs.match }}
+
+  docs:
+    needs: check_commit
+    if: ${{ needs.check_commit.outputs.match != 'true' }}
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+      packages: read
+    runs-on: self-hosted
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1'
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions token
+          # DOCUMENTER_KEY: ${{ secrets.JULIASIM_REGISTRY_SSH_KEY }} # For authentication with SSH deploy key
+        run: julia --color=yes --project=docs/ docs/make.jl
