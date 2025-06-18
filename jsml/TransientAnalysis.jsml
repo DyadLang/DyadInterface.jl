@@ -17,7 +17,7 @@ metadata {
           "dyad:type": "component"
         },
         "alg": {
-          "enum": ["auto", "Rodas4", "FBDF", "Tsit5"],
+          "enum": ["auto", "Rodas5P", "FBDF", "Tsit5"],
           "default": "auto"
         },
         "abstol": {

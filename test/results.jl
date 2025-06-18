@@ -21,7 +21,12 @@ sol = run_analysis(spec)
 
 m = AnalysisSolutionMetadata(sol)
 
-@test length(m.artifacts) == 2
+artifact_names = artifacts(sol)
+@test artifact_names ==
+      [:SimulationSolutionPlot, :SimulationSolutionTable,
+    :RawSolution, :SimplifiedSystem, :InitialSystem]
+
+@test length(m.artifacts) == 5
 @test m.artifacts[1].name == :SimulationSolutionPlot
 @test m.artifacts[1].type == ArtifactType.PlotlyPlot
 @test m.artifacts[1].title == "Solution plot"
@@ -34,6 +39,22 @@ m = AnalysisSolutionMetadata(sol)
 @test_nowarn artifacts(sol, m.artifacts[1].name)
 @test artifacts(sol, m.artifacts[2].name) isa DataFrame
 
+@test ModelingToolkit.isscheduled(artifacts(sol, :SimplifiedSystem))
+@test !ModelingToolkit.isscheduled(artifacts(sol, :InitialSystem))
+@test artifacts(sol, :RawSolution) isa ODESolution
+
 vizdef = PlotlyVisualizationSpec(
     m.allowed_symbols[[2, 1]], (;), [Attribute("tstart", "start time", 0.0)])
 @test_nowarn customizable_visualization(sol, vizdef)
+
+@testset "SteadyStateAnalysis" begin
+    spec = SteadyStateAnalysisSpec(; model, name = :lotkavolterra)
+    @test spec isa SteadyStateAnalysisSpec
+    sol = run_analysis(spec)
+    @test SciMLBase.successful_retcode(sol)
+
+    @test length(artifacts(sol)) == 4
+    @test ModelingToolkit.isscheduled(artifacts(sol, :SimplifiedSystem))
+    @test !ModelingToolkit.isscheduled(artifacts(sol, :InitialSystem))
+    @test artifacts(sol, :RawSolution) isa SciMLBase.NonlinearSolution
+end

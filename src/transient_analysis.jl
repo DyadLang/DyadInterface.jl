@@ -28,7 +28,7 @@ a concrete `TransientAnalysisSpec`.
 
   - `name`: The name of the analysis
   - `model`: An `ODESystem` representing the model that will be used for numerical integration
-  - `alg`: The ODE integrator to use as a symbol. Possible options are: `:auto` (default), `:Rodas4`, `:FBDF`, `:Tsit5`
+  - `alg`: The ODE integrator to use as a string. Possible options are: `"auto"` (default), `"Rodas5P"`, `"FBDF"`, `"Tsit5"`
   - `start`: The start time for the integration. Defeults to 0.0
   - `stop`: The end time for the integration.
   - `abstol`: Absolute tolerance to use during the simulation. Defaults to 1e-6.
@@ -36,16 +36,16 @@ a concrete `TransientAnalysisSpec`.
   - `saveat`: Timepoints to save the solution at or `0` (for letting the integrator decide).
   - `dtmax`: The maximum allowed timestep or `0` (for letting the integrator decide).
 """
-@kwdef struct TransientAnalysisSpec{S <: AbstractString, T1, T2, T3, M} <:
+@kwdef struct TransientAnalysisSpec{S <: AbstractString, T1, T2, T3, T4, T5, M} <:
               AbstractTransientAnalysisSpec
     name::Symbol = :TransientAnalysis
     model::M
     alg::S = "auto"
     start::T1 = 0.0
-    stop::T1
-    abstol::T2 = 1e-6
-    reltol::T3 = 1e-3
-    saveat::Union{T1, Vector{<:T1}} = 0.0
+    stop::T2
+    abstol::T3 = 1e-6
+    reltol::T4 = 1e-3
+    saveat::Union{T5, Vector{<:T5}} = 0.0
     dtmax::T1 = 0.0
     IfLifting::Bool = false
 end
@@ -108,7 +108,11 @@ function run_analysis(spec::TransientAnalysisSpec)
     sys = sol.prob.f.sys
     prob_expr = ODEProblemExpr{true}(sys, [], config.tspan)
 
-    stripped_spec = @set spec.model = nothing
+    if sol === stripped_sol
+        stripped_spec = spec
+    else
+        stripped_spec = @set spec.model = nothing
+    end
     res = TransientAnalysisSolution(stripped_spec, stripped_sol, prob_expr)
     return res
 end
@@ -136,6 +140,30 @@ function AnalysisSolutionMetadata(sol::TransientAnalysisSolution)
             "Solution timeseries table",
             "Solution timeseries table for $(nameof(sol))"
         ))
+    push!(artifacts,
+        ArtifactMetadata(
+            :RawSolution,
+            ArtifactType.Native,
+            "The underlying ODESolution for the analysis run.",
+            "The underlying ODESolution object for the analysis run."
+        ),
+        ArtifactMetadata(
+            :SimplifiedSystem,
+            ArtifactType.Native,
+            "The simplified (flat) model used in the analysis.",
+            "The structurally simplified model corresponding to the analysis."
+        )
+    )
+    if !isnothing(sol.spec.model)
+        push!(artifacts,
+            ArtifactMetadata(
+                :InitialSystem,
+                ArtifactType.Native,
+                "The model provided to the analysis.",
+                "The initial model provided to the analysis (before symplification)."
+            )
+        )
+    end
 
     full_sol = rebuild_sol(sol)
     allowed_symbols = getname.(variable_symbols(full_sol))
@@ -149,6 +177,12 @@ function artifacts(sol::TransientAnalysisSolution, name::Symbol)
         plot(full_sol)
     elseif name == :SimulationSolutionTable
         DataFrame(full_sol)
+    elseif name == :RawSolution
+        full_sol
+    elseif name == :SimplifiedSystem
+        symbolic_container(sol)
+    elseif name == :InitialSystem
+        sol.spec.model
     else
         error("Solution type $name not recognized!")
     end

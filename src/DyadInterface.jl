@@ -28,7 +28,7 @@ using ModelingToolkit: ModelingToolkit, AbstractTimeDependentSystem, ODESystem,
                        IfLifting
 using OrdinaryDiffEqDefault: DefaultODEAlgorithm
 using OrdinaryDiffEqTsit5: Tsit5
-using OrdinaryDiffEqRosenbrock: Rodas4
+using OrdinaryDiffEqRosenbrock: Rodas5P
 using OrdinaryDiffEqBDF: FBDF
 using ADTypes: AutoForwardDiff
 using UUIDs: uuid4, UUID

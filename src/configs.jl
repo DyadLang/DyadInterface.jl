@@ -27,7 +27,7 @@ Translate ODEProblem specific analysis specification attributes from strings to 
 
 ### The fields that one can use from this struct are:
 
-    - `alg`: the ODE integrator to use (supported values in the spec are: "auto", "Rodas4", "FBDF", "Tsit5").
+    - `alg`: the ODE integrator to use (supported values in the spec are: "auto", "Rodas5P", "FBDF", "Tsit5").
     - `tspan`: the timespan of the problem (obtained from `start` & `stop` in the spec).
     - `saveat`: the `saveat` keyword to be passed when solving. Optional in the spec, defaults to `Float64[]`.
     - `abstol`: the `abstol` keyword to be passed when solving.
@@ -38,7 +38,7 @@ function ODEProblemConfig(spec::AbstractAnalysisSpec)
     # prepare
     available_algs = Dict{String, SciMLBase.AbstractODEAlgorithm}(
         "auto" => DefaultODEAlgorithm(autodiff = AutoForwardDiff()),
-        "Rodas4" => Rodas4(),
+        "Rodas5P" => Rodas5P(),
         "FBDF" => FBDF(),
         "Tsit5" => Tsit5()
     )

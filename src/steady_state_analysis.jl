@@ -31,8 +31,8 @@ end
     name::Symbol = :SteadyStateAnalysis
     model::M
     alg::S = "auto"
-    abstol::T1
-    reltol::T2
+    abstol::T1 = 1e-8
+    reltol::T2 = 1e-8
     IfLifting::Bool = false
 end
 
@@ -101,11 +101,12 @@ function run_analysis(spec::SteadyStateAnalysisSpec)
 end
 
 function rebuild_sol(sol::SteadyStateAnalysisSolution)
-    prob = eval(sol.prob_expr)
-    sol = sol.sol
-    full_sol = @set sol.prob = prob
+    # prob = eval(sol.prob_expr)
+    # sol = sol.sol
+    # TODO: for SciMLBase.NonlinearSolution it looks like @set does not work
+    # full_sol = @set sol.prob = prob
 
-    return full_sol
+    return sol.sol
 end
 
 function AnalysisSolutionMetadata(sol::SteadyStateAnalysisSolution)
@@ -115,6 +116,30 @@ function AnalysisSolutionMetadata(sol::SteadyStateAnalysisSolution)
         "Solution timeseries table",
         "Solution timeseries table for $(nameof(sol))"
     )]
+    push!(artifacts,
+        ArtifactMetadata(
+            :RawSolution,
+            ArtifactType.Native,
+            "The underlying NonlinearSolution for the analysis run.",
+            "The underlying NonlinearSolution object for the analysis run."
+        ),
+        ArtifactMetadata(
+            :SimplifiedSystem,
+            ArtifactType.Native,
+            "The simplified (flat) model used in the analysis.",
+            "The structurally simplified model corresponding to the analysis."
+        )
+    )
+    if !isnothing(sol.spec.model)
+        push!(artifacts,
+            ArtifactMetadata(
+                :InitialSystem,
+                ArtifactType.Native,
+                "The model provided to the analysis.",
+                "The initial model provided to the analysis (before symplification)."
+            )
+        )
+    end
 
     full_sol = rebuild_sol(sol)
     allowed_symbols = getname.(variable_symbols(full_sol))
@@ -126,8 +151,14 @@ function artifacts(sol::SteadyStateAnalysisSolution, name::Symbol)
     full_sol = rebuild_sol(sol)
     if name == :SimulationSolutionTable
         DataFrame(full_sol)
+    elseif name == :RawSolution
+        full_sol
+    elseif name == :SimplifiedSystem
+        symbolic_container(sol)
+    elseif name == :InitialSystem
+        sol.spec.model
     else
-        error("Solution type $name not recognized!")
+        error("Artifact type $name not recognized!")
     end
 end
 

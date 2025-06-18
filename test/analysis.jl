@@ -55,7 +55,7 @@ using .LotkaVolterraTransientAnalysis
     end
 end
 
-@testset "$i integrator" for i in ["auto", "Rodas4", "FBDF", "Tsit5"]
+@testset "$i integrator" for i in ["auto", "Rodas5P", "FBDF", "Tsit5"]
     json_str = """
     {
         "name": "Lotka-Volterra",
@@ -71,7 +71,7 @@ end
     # if validation fails a JSONSchema issue type is returned
     @test spec isa LotkaVolterraTransientSpec
 
-    if i ∉ ["Rodas4", "FBDF"]
+    if i ∉ ["Rodas5P", "FBDF"]
         sol = run_analysis(spec)
         @test SciMLBase.successful_retcode(sol)
     end

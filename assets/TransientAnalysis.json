@@ -15,7 +15,7 @@
         "alg": {
             "enum": [
                 "auto",
-                "Rodas4",
+                "Rodas5P",
                 "FBDF",
                 "Tsit5"
             ],
