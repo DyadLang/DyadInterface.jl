@@ -56,6 +56,10 @@ function DyadInterface.run_analysis(spec::LotkaVolterraTransientSpec)
     run_analysis(base_spec)
 end
 
-export LotkaVolterraTransientSpec
+function LotkaVolterraTransient(; kwargs...)
+    DyadInterface.run_analysis(LotkaVolterraTransientSpec(; kwargs...))
+end
+
+export LotkaVolterraTransientSpec, LotkaVolterraTransient
 
 end

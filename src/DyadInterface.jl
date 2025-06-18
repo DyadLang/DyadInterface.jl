@@ -1,6 +1,7 @@
 module DyadInterface
 
-export TransientAnalysisSpec, SteadyStateAnalysisSpec
+export TransientAnalysisSpec, TransientAnalysis, SteadyStateAnalysisSpec,
+       SteadyStateAnalysis
 export simulate, run_analysis, rebuild_sol, get_simplified_model
 export AbstractAnalysisSpec, AbstractAnalysisSolution, AbstractTransientAnalysisSpec,
        AnalysisSolutionMetadata, TransientAnalysisSolution,

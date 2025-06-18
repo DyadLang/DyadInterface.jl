@@ -35,6 +35,11 @@ using Malt
 using Pkg
 using SymbolicIndexingInterface
 
+# workaround for solution stripping
+function DyadInterface.maybe_strip_sol(sol, ::Val{true})
+    SciMLBase.strip_solution(sol)
+end
+
 json_str = """
     {
         "name": "LotkaVolterraTransient",
@@ -50,12 +55,28 @@ json_str = """
 payload = JSON3.read(json_str, LotkaVolterraTransientSpec)
 
 result = run_analysis(payload)
+result_direct = LotkaVolterraTransient(;
+    name = :LotkaVolterraTransient,
+    alg = "auto",
+    abstol = 1e-6,
+    reltol = 1e-3,
+    start = 0,
+    stop = 1,
+    saveat = 0,
+    var"α1" = 1.1
+)
+
 @test SciMLBase.successful_retcode(result)
 # check that stop is updated from the default of 10
 @test result.sol.t[end] == 1
 
+@test SciMLBase.successful_retcode(result_direct)
+# check that stop is updated from the default of 10
+@test result_direct.sol.t[end] == 1
+
 @testset "Serialization" begin
     serialize_solution(joinpath(@__DIR__, "result.jls"), result)
+
     sb_v = Pkg.Operations.Context().env.manifest[findfirst(
         v -> v.name == "SciMLBase", Pkg.Operations.Context().env.manifest)].version
     mtk_v = Pkg.Operations.Context().env.manifest[findfirst(
@@ -80,6 +101,12 @@ result = run_analysis(payload)
 
             Pkg.develop(path = joinpath(@__DIR__, ".."))
             using DyadInterface
+
+            # workaround for solution stripping
+            function DyadInterface.maybe_strip_sol(sol, ::Val{true})
+                SciMLBase.strip_solution(sol)
+            end
+
             include(joinpath(@__DIR__, "codegen.jl"))
             using .LotkaVolterraTransientAnalysis
 

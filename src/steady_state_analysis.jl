@@ -28,7 +28,7 @@ end
 """
 @kwdef struct SteadyStateAnalysisSpec{S <: AbstractString, T1, T2, M <: ODESystem} <:
               AbstractSteadyStateAnalysisSpec
-    name::Symbol
+    name::Symbol = :SteadyStateAnalysis
     model::M
     alg::S = "auto"
     abstol::T1
@@ -66,6 +66,8 @@ SciMLBase.successful_retcode(sol::SteadyStateAnalysisSolution) = successful_retc
 
 Base.nameof(sol::SteadyStateAnalysisSolution) = sol.spec.name
 
+SteadyStateAnalysis(; kwargs...) = run_analysis(SteadyStateAnalysisSpec(; kwargs...))
+
 function run_analysis(spec::SteadyStateAnalysisSpec)
     # prepare
     available_algs = Dict(
@@ -89,7 +91,8 @@ function run_analysis(spec::SteadyStateAnalysisSpec)
     sol = solve(prob, alg; spec.abstol, spec.reltol)
 
     # post-process
-    stripped_sol = strip_solution(sol)
+    # workaround for solution stripping issue
+    stripped_sol = maybe_strip_sol(sol, Val(true))
     sys = sol.prob.f.sys
     prob_expr = ODEProblemExpr{true}(sys, [], nothing)
 

@@ -38,7 +38,7 @@ a concrete `TransientAnalysisSpec`.
 """
 @kwdef struct TransientAnalysisSpec{S <: AbstractString, T1, T2, T3, M} <:
               AbstractTransientAnalysisSpec
-    name::Symbol
+    name::Symbol = :TransientAnalysis
     model::M
     alg::S = "auto"
     start::T1 = 0.0
@@ -82,6 +82,17 @@ SciMLBase.successful_retcode(sol::TransientAnalysisSolution) = successful_retcod
 
 Base.nameof(sol::TransientAnalysisSolution) = sol.spec.name
 
+function maybe_strip_sol(sol, arg)
+    sol
+end
+
+# Use this to enable solution stripping
+# function maybe_strip_sol(sol, ::Val{true})
+#     strip_solution(sol)
+# end
+
+TransientAnalysis(; kwargs...) = run_analysis(TransientAnalysisSpec(; kwargs...))
+
 function run_analysis(spec::TransientAnalysisSpec)
     # prepare
     config = ODEProblemConfig(spec)
@@ -92,7 +103,8 @@ function run_analysis(spec::TransientAnalysisSpec)
     sol = solve(prob, config.alg; config.abstol, config.reltol, config.dtmax, config.saveat)
 
     # post-process
-    stripped_sol = strip_solution(sol)::AbstractODESolution
+    # workaround for solution stripping issue
+    stripped_sol = maybe_strip_sol(sol, Val(true))
     sys = sol.prob.f.sys
     prob_expr = ODEProblemExpr{true}(sys, [], config.tspan)
 

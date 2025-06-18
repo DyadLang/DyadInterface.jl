@@ -49,6 +49,11 @@ We can then run the analysis using `run_analysis`
 sol = run_analysis(spec)
 ```
 
+Alternatively, the Dyad kernel generates a convenient `TransientAnalysis` function, which will create the spec and call `run_analysis` on it:
+```@example lotka
+sol = TransientAnalysis(; model, name=:LotkaVolterraTransient, abstol = 1e-6, reltol = 1e-3, stop=10., alg="Tsit5")
+```
+
 ### [The Dyad generated functions](@id dyad_transient_workflow)
 
 Assuming we have the following Dyad code,
@@ -120,7 +125,11 @@ function DyadInterface.run_analysis(spec::LotkaVolterraTransientSpec)
     run_analysis(base_spec)
 end
 
-export LotkaVolterraTransientSpec
+function LotkaVolterraTransient(; kwargs...)
+    DyadInterface.run_analysis(LotkaVolterraTransientSpec(; kwargs...))
+end
+
+export LotkaVolterraTransientSpec, LotkaVolterraTransient
 ```
 
 Users can instantiate a transient analysis specification via
@@ -131,6 +140,12 @@ spec = LotkaVolterraTransientSpec()
 We can then run the analysis using `run_analysis`
 ```@example lotka
 sol = run_analysis(spec)
+```
+
+or directly without creating the spec
+
+```@example lotka
+sol = LotkaVolterraTransient()
 ```
 
 ## [The JSON interface for Dyad Builder](@id json_transient_workflow)
