@@ -3,8 +3,8 @@ partial analysis TransientAnalysis
   parameter alg::String = "auto"
   parameter start::Time = 0
   parameter stop::Time
-  parameter abstol::Real
-  parameter reltol::Real
+  parameter abstol::Real = 1e-6
+  parameter reltol::Real = 1e-3
   parameter saveat::Real = 0
   parameter dtmax::Time = 0
   parameter IfLifting::Boolean = false

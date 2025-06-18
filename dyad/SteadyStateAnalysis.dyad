@@ -1,8 +1,8 @@
 partial analysis SteadyStateAnalysis
   extends Analysis
   parameter alg::String = "auto"
-  parameter abstol::Real
-  parameter reltol::Real
+  parameter abstol::Real = 1e-8
+  parameter reltol::Real = 1e-8
   parameter IfLifting::Boolean = false
 
   model::Empty = Empty()
