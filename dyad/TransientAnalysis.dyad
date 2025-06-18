@@ -4,7 +4,7 @@ partial analysis TransientAnalysis
   parameter start::Time = 0
   parameter stop::Time
   parameter abstol::Real = 1e-6
-  parameter reltol::Real = 1e-3
+  parameter reltol::Real = 1e-6
   parameter saveat::Real = 0
   parameter dtmax::Time = 0
   parameter IfLifting::Boolean = false

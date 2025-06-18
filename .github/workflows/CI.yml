@@ -18,7 +18,7 @@ jobs:
         with:
           version: '1'
       - name: "Set up private JuliaHub registries"
-        uses: "JuliaComputing/set-up-private-juliahub-registries@a60c35b0463eb38fcb438d0222ca56ce422d970a" # v1.2.1
+        uses: "JuliaComputing/set-up-private-juliahub-registries@93a57d352d8435399461ffe68df41d193e4619b3" # v1.3.0
         with:
           encoded-juliahub-token: "${{ secrets.JULIAHUB_TOKEN_ENCODED }}"
           ssh-key: "${{ secrets.JULIASIM_REGISTRY_SSH_KEY }}"

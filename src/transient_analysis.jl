@@ -32,7 +32,7 @@ a concrete `TransientAnalysisSpec`.
   - `start`: The start time for the integration. Defeults to 0.0
   - `stop`: The end time for the integration.
   - `abstol`: Absolute tolerance to use during the simulation. Defaults to 1e-6.
-  - `reltol`: Relative tolerance to use during the simulation. Defaults to 1e-3.
+  - `reltol`: Relative tolerance to use during the simulation. Defaults to 1e-6.
   - `saveat`: Timepoints to save the solution at or `0` (for letting the integrator decide).
   - `dtmax`: The maximum allowed timestep or `0` (for letting the integrator decide).
 """
@@ -44,7 +44,7 @@ a concrete `TransientAnalysisSpec`.
     start::T1 = 0.0
     stop::T2
     abstol::T3 = 1e-6
-    reltol::T4 = 1e-3
+    reltol::T4 = 1e-6
     saveat::Union{T5, Vector{<:T5}} = 0.0
     dtmax::T1 = 0.0
     IfLifting::Bool = false
@@ -91,6 +91,41 @@ end
 #     strip_solution(sol)
 # end
 
+"""
+    TransientAnalysis(; model, [name, alg, start, stop, abstol, reltol, saveat, dtmax])
+
+Run a transient analysis, specifying how a numerical `ODEProblem` would be formulated and solved.
+
+`model` is the only required keyword argument here.  You can construct something to pass into `model` like so:
+
+```julia
+using ModelingToolkit, YourDyadLibrary
+using DyadInterface
+@named model = Hello() # from the standard hello world example
+world_result = TransientAnalysis(; model = model, abstol = 1e-14) # for example
+```
+
+This is effectively the same as running the following transient analysis:
+
+```dyad
+analysis World
+    extends TransientAnalysis(abstol = 1e-14)
+    model = Hello()
+end
+```
+
+## Keyword Arguments
+
+  - `name`: The name of the analysis
+  - `model`: An `ODESystem` representing the model that will be used for numerical integration
+  - `alg`: The ODE integrator to use as a string. Possible options are: `"auto"` (default), `"Rodas5P"`, `"FBDF"`, `"Tsit5"`
+  - `start`: The start time for the integration. Defeults to 0.0
+  - `stop`: The end time for the integration.
+  - `abstol`: Absolute tolerance to use during the simulation. Defaults to 1e-6.
+  - `reltol`: Relative tolerance to use during the simulation. Defaults to 1e-6.
+  - `saveat`: Timepoints to save the solution at or `0` (for letting the integrator decide).
+  - `dtmax`: The maximum allowed timestep or `0` (for letting the integrator decide).
+"""
 TransientAnalysis(; kwargs...) = run_analysis(TransientAnalysisSpec(; kwargs...))
 
 function run_analysis(spec::TransientAnalysisSpec)
@@ -118,11 +153,14 @@ function run_analysis(spec::TransientAnalysisSpec)
 end
 
 function rebuild_sol(sol::TransientAnalysisSolution)
-    prob = eval(sol.prob_expr)
-    sol = sol.sol
-    full_sol = @set sol.prob = prob
-
-    return full_sol
+    if sol.sol.prob == (p = nothing,)
+        # solution was stripped, attempt recovery
+        prob = eval(sol.prob_expr)
+        sol = sol.sol
+        @set sol.prob = prob
+    else
+        sol.sol
+    end
 end
 
 function AnalysisSolutionMetadata(sol::TransientAnalysisSolution)

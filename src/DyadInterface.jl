@@ -49,16 +49,13 @@ include("overrides.jl")
 include("precompile.jl")
 
 function print_license()
-    license_text = """JuliaHub products (Dyad with all its modules, and all
-    Dyad packages provided through the JuliaHubRegistry) are commercial
-    products of JuliaHub, Inc. They are free to use for non-commercial academic
-    teaching and research purposes. For commercial users, license fees apply.
-    Please refer to the End User License Agreement (https://juliahub.com/company/eula/)
-    for details. Please contact sales@juliahub.com for purchasing information.
+    license_text = """
+    JuliaHub provides Dyad Studio under the Dyad Source Available License for educational and personal use (https://github.com/DyadLang). 
+    For commercial usage, please contact us (https://juliahub.com/company/contact-us-dyad).
 
-    To report any bugs, issues, or feature requests for Dyad software,
-    please use the public Github repository DyadIssues, located at
-    https://github.com/JuliaComputing/DyadIssues.
+    To report any bugs, issues, or to request features for Dyad software,
+    please use the public Github repository DyadIssues, 
+    located at https://github.com/JuliaComputing/DyadIssues.
     """
 
     printstyled(stderr, "Important Note: ", bold = true)
@@ -66,7 +63,8 @@ function print_license()
 end
 
 function __init__()
-    if Preferences.@load_preference("PrintLicense", true)
+    if Preferences.@load_preference("PrintLicense", true) && # we should be generating output
+       ccall(:jl_generating_output, Cint, ()) != 1 # we are not precompiling
         print_license()
     end
 end

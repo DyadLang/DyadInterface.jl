@@ -1,7 +1,7 @@
 name = "DyadInterface"
 uuid = "99806f68-afab-45ca-9d8c-ceff6bc61f54"
 authors = ["JuliaHub"]
-version = "4.3.2"
+version = "4.3.3"
 
 [deps]
 ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
@@ -37,7 +37,7 @@ CommonSolve = "0.2.4"
 DataFrames = "1.7.0"
 EnumX = "1.0.4"
 Makie = "0.21, 0.22"
-ModelingToolkit = "9.80.4"
+ModelingToolkit = "9.80.5"
 NonlinearSolve = "4.3"
 OrdinaryDiffEqBDF = "1.2.0"
 OrdinaryDiffEqDefault = "1.2.0"
