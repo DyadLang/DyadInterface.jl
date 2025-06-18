@@ -6,7 +6,7 @@ using JET
 using Plots # we need it loaded for JET to be able to see the methods
 
 @testset "Aqua" begin
-    Aqua.find_persistent_tasks_deps(DyadInterface)
+    # Aqua.find_persistent_tasks_deps(DyadInterface) # this is too buggy to use with SciML and monorepos
     Aqua.test_ambiguities(DyadInterface, recursive = false)
     Aqua.test_deps_compat(DyadInterface)
     Aqua.test_piracies(DyadInterface)
