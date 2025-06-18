@@ -18,7 +18,7 @@ jobs:
   check_commit:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
             ref: ${{ github.event.pull_request.head.ref }}
       - name: Check if the build should be skipped
@@ -48,8 +48,8 @@ jobs:
     timeout-minutes: 90
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@latest
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: julia-actions/setup-julia@5c9647d97b78a5debe5164e9eec09d653d29bd71 # v2.6.1
         with:
           version: '1'
       - name: Install dependencies

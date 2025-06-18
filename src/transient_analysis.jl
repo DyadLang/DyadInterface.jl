@@ -31,8 +31,8 @@ a concrete `TransientAnalysisSpec`.
   - `alg`: The ODE integrator to use as a symbol. Possible options are: `:auto` (default), `:Rodas4`, `:FBDF`, `:Tsit5`
   - `start`: The start time for the integration. Defeults to 0.0
   - `stop`: The end time for the integration.
-  - `abstol`: Absolute tolerance to use during the simulation
-  - `reltol`: Relative tolerance to use during the simulation
+  - `abstol`: Absolute tolerance to use during the simulation. Defaults to 1e-6.
+  - `reltol`: Relative tolerance to use during the simulation. Defaults to 1e-3.
   - `saveat`: Timepoints to save the solution at or `0` (for letting the integrator decide).
   - `dtmax`: The maximum allowed timestep or `0` (for letting the integrator decide).
 """
@@ -43,8 +43,8 @@ a concrete `TransientAnalysisSpec`.
     alg::S = "auto"
     start::T1 = 0.0
     stop::T1
-    abstol::T2
-    reltol::T3
+    abstol::T2 = 1e-6
+    reltol::T3 = 1e-3
     saveat::Union{T1, Vector{<:T1}} = 0.0
     dtmax::T1 = 0.0
     IfLifting::Bool = false
@@ -156,4 +156,9 @@ end
     @series begin
         full_sol
     end
+end
+
+function SymbolicIndexingInterface.symbolic_container(sol::TransientAnalysisSolution)
+    full_sol = rebuild_sol(sol)
+    symbolic_container(full_sol.prob.f)
 end

@@ -17,7 +17,7 @@ jobs:
       )
     runs-on: "self-hosted"
     steps:
-      - uses: "JuliaRegistries/TagBot@v1"
+      - uses: "JuliaRegistries/TagBot@62dd7cd21dcde087eca10e70c3fc3f8cefbe44a2" # v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           ssh: "${{ secrets.JULIASIM_REGISTRY_SSH_KEY }}"

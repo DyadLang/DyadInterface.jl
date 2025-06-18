@@ -130,4 +130,7 @@ rebuilt_model = symbolic_container(sol.prob.f)
     # plot fallback for interactive usage (special cased for TransientAnalysis)
     @test_nowarn plot(result)
     @test_nowarn plot(result, idxs = 1)
+
+    model = symbolic_container(result)
+    @test_nowarn plot(result, idxs = model.x + 1)
 end

@@ -7,6 +7,8 @@ export AbstractAnalysisSpec, AbstractAnalysisSolution, AbstractTransientAnalysis
        ArtifactType, Attribute, PlotlyVisualizationSpec
 export artifacts, customizable_visualization
 export serialize_solution, deserialize_solution
+# reexports
+export symbolic_container
 
 using Preferences: Preferences
 using CommonSolve: solve
@@ -16,7 +18,8 @@ using SciMLBase: SciMLBase, DEProblem, ODEProblem, SteadyStateProblem, FullSpeci
 using NonlinearSolve: FastShortcutNonlinearPolyalg, TrustRegion, NewtonRaphson,
                       LevenbergMarquardt
 using RecipesBase: RecipesBase, plot, @recipe, @series
-using SymbolicIndexingInterface: variable_symbols, getname, symbolic_container
+using SymbolicIndexingInterface: SymbolicIndexingInterface, variable_symbols, getname,
+                                 symbolic_container
 using ModelingToolkit: ModelingToolkit, AbstractTimeDependentSystem, ODESystem,
                        ODEProblemExpr, defaults,
                        parse_variable, Num, Equation, extend,

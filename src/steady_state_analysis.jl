@@ -132,3 +132,8 @@ function customizable_visualization(
         ::SteadyStateAnalysisSolution, ::PlotlyVisualizationSpec)
     missing
 end
+
+function SymbolicIndexingInterface.symbolic_container(sol::SteadyStateAnalysisSolution)
+    full_sol = rebuild_sol(sol)
+    symbolic_container(full_sol.prob.f)
+end

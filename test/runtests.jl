@@ -9,5 +9,6 @@ using Test
     @safetestset "Additional passes" include("structural_simplify_passes.jl")
     @safetestset "Results" include("results.jl")
     @safetestset "Full pipeline" include("pipeline.jl")
+    @safetestset "Makie" include("makie.jl")
     # @safetestset "Deprecations" include("deprecations.jl")
 end

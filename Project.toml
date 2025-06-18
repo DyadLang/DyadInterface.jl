@@ -1,7 +1,7 @@
 name = "DyadInterface"
 uuid = "99806f68-afab-45ca-9d8c-ceff6bc61f54"
 authors = ["JuliaHub"]
-version = "4.0.0"
+version = "4.1.0"
 
 [deps]
 ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
@@ -25,11 +25,18 @@ StructTypes = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
 SymbolicIndexingInterface = "2efcf032-c050-4f8e-a9bb-153293bab1f5"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
+[weakdeps]
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[extensions]
+DyadInterfaceMakieExt = "Makie"
+
 [compat]
 ADTypes = "1.12.0"
 CommonSolve = "0.2.4"
 DataFrames = "1.7.0"
 EnumX = "1.0.4"
+Makie = "0.21, 0.22"
 ModelingToolkit = "9.70.0"
 NonlinearSolve = "4.3"
 OrdinaryDiffEqBDF = "1.2.0"
