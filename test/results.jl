@@ -53,6 +53,8 @@ vizdef = PlotlyVisualizationSpec(
     sol = run_analysis(spec)
     @test SciMLBase.successful_retcode(sol)
 
+    @test artifacts(sol, :SimulationSolutionTable) isa DataFrame
+
     @test length(artifacts(sol)) == 4
     @test ModelingToolkit.isscheduled(artifacts(sol, :SimplifiedSystem))
     @test !ModelingToolkit.isscheduled(artifacts(sol, :InitialSystem))

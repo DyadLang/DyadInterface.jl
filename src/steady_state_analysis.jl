@@ -150,7 +150,7 @@ end
 function artifacts(sol::SteadyStateAnalysisSolution, name::Symbol)
     full_sol = rebuild_sol(sol)
     if name == :SimulationSolutionTable
-        DataFrame(full_sol)
+        DataFrame(Symbol.(variable_symbols(symbolic_container(full_sol))) .=> full_sol.u)
     elseif name == :RawSolution
         full_sol
     elseif name == :SimplifiedSystem
